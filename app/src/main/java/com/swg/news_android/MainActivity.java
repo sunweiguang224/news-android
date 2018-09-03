@@ -19,6 +19,7 @@ import android.graphics.Point;
 import android.webkit.WebChromeClient;
 import android.view.KeyEvent;
 
+
 public class MainActivity extends Activity {
     private WebView webView;
 
@@ -27,8 +28,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setStatusBarFullTransparent();
-        setFitSystemWindow(false);
+        setStatusBar();
 
         init();
     }
@@ -71,17 +71,26 @@ public class MainActivity extends Activity {
     /**
      * 全透状态栏
      */
-    protected void setStatusBarFullTransparent() {
+    protected void setStatusBar() {
         if (Build.VERSION.SDK_INT >= 21) {//21表示5.0
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            View decorView = window.getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-
             window.setStatusBarColor(Color.TRANSPARENT);
 
+            int vis = decorView.getSystemUiVisibility();
+
+            // 只能设置2钟颜色
+
+            // 深色
+            vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+            // 白色
+//            vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+            decorView.setSystemUiVisibility(vis);
 
 
         } else if (Build.VERSION.SDK_INT >= 19) {//19表示4.4
@@ -89,82 +98,30 @@ public class MainActivity extends Activity {
             //虚拟键盘也透明
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-    }
 
-    /**
-     * 半透明状态栏
-     */
-    protected void setHalfTransparent() {
-
-        if (Build.VERSION.SDK_INT >= 21) {//21表示5.0
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        } else if (Build.VERSION.SDK_INT >= 19) {//19表示4.4
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //虚拟键盘也透明
-            // getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-    }
-
-    /**
-     * 如果需要内容紧贴着StatusBar
-     * 应该在对应的xml布局文件中，设置根布局fitsSystemWindows=true。
-     */
-    private View contentViewGroup;
-
-    protected void setFitSystemWindow(boolean fitSystemWindow) {
-        if (contentViewGroup == null) {
-            contentViewGroup = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-        }
-        contentViewGroup.setFitsSystemWindows(fitSystemWindow);
-    }
-
-    /**
-     * 为了兼容4.4的抽屉布局->透明状态栏
-     */
-//    protected void setDrawerLayoutFitSystemWindow() {
-//        if (Build.VERSION.SDK_INT == 19) {//19表示4.4
-//            int statusBarHeight = getStatusHeight(this);
-//            if (contentViewGroup == null) {
-//                contentViewGroup = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-//            }
-//            if (contentViewGroup instanceof DrawerLayout) {
-//                DrawerLayout drawerLayout = (DrawerLayout) contentViewGroup;
-//                drawerLayout.setClipToPadding(true);
-//                drawerLayout.setFitsSystemWindows(false);
-//                for (int i = 0; i < drawerLayout.getChildCount(); i++) {
-//                    View child = drawerLayout.getChildAt(i);
-//                    child.setFitsSystemWindows(false);
-//                    child.setPadding(0,statusBarHeight, 0, 0);
+        // 6.0以上，状态栏文字深色
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            View decorView = this.getWindow().getDecorView();
+//            if (decorView != null) {
+//                int vis = decorView.getSystemUiVisibility();
+//                // 深色
+//                if (true) {
+//                    vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+//
+//                    // 白色
+//                } else {
+//                    vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 //                }
-//
+//                decorView.getSystemUiVisibility();
+//                vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+//                decorView.setSystemUiVisibility(vis);
+//                decorView.setSystemUiVisibility(0x0056b568);
 //            }
-//        }
-//    }
+
+        }
+    }
 
 
-    /**
-     * 获取状态栏高度
-     */
-//    int getStatusBarHeight() {
-//        WindowManager wm = this.getWindowManager();
-//
-//        Point point=new Point();
-//        wm.getDefaultDisplay().getSize(point);
-//        int width = point.x;
-//        int height = point.y;
-//
-//        int result = 0;
-//        int resourceId = this.context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            result = this.context.getResources().getDimensionPixelSize(resourceId);
-//        }
-//
-//        return result;
-//    }
     private float getStatusBarHeightPx() {
         int result = 0;
         int resourceId = this.getResources().getIdentifier("status_bar_height", "dimen", "android");
