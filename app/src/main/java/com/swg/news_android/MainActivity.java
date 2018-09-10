@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 //        webView.loadUrl("https://18686604386.davdian.com/");
 //        webView.loadUrl("http://localhost:7001/");
 //        webView.loadUrl("http://127.0.0.1:7001/");
-        webView.loadUrl("http://192.168.1.111:7001/");
+        webView.loadUrl("http://tiantianxiangkan.com");
         WebSettings settings = webView.getSettings();
 
         // 如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
